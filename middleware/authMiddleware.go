@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	helper "user-athentication-golang/helpers"
+	helper "github.com/chris92vr/mongodb-go-jwt/helper"
 
 	"github.com/gin-gonic/gin"
 )

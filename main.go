@@ -3,8 +3,8 @@ package main
 import (
 	"os"
 
-	middleware "user-athentication-golang/middleware"
-	routes "user-athentication-golang/routes"
+	"github.com/chris92vr/mongodb-go-jwt/middleware"
+	"github.com/chris92vr/mongodb-go-jwt/routes"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/heroku/x/hmetrics/onload"

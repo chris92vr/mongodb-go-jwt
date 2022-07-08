@@ -1,4 +1,4 @@
-package helper
+package helpers
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"user-athentication-golang/database"
+	"github.com/chris92vr/mongodb-go-jwt/database"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"go.mongodb.org/mongo-driver/bson"

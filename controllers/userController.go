@@ -7,12 +7,14 @@ import (
 	"net/http"
 	"time"
 
+	helper "github.com/chris92vr/mongodb-go-jwt/helpers"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/mgo.v2/bson"
 
-	"user-athentication-golang/database"
+	"github.com/chris92vr/mongodb-go-jwt/database"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
