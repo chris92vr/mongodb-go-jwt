@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	helper "github.com/chris92vr/mongodb-go-jwt/helpers"
-
+	"github.com/chris92vr/mongodb-go-jwt/helpers"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,7 +18,7 @@ func Authentication() gin.HandlerFunc {
 			return
 		}
 
-		claims, err := helper.ValidateToken(clientToken)
+		claims, err := helpers.ValidateToken(clientToken)
 		if err != "" {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 			c.Abort()
