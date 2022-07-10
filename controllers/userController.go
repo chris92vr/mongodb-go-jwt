@@ -143,3 +143,74 @@ func Login() gin.HandlerFunc {
 
 	}
 }
+
+func RefreshToken() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		var user models.User
+		var foundUser models.User
+
+		if err := c.BindJSON(&user); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		err := userCollection.FindOne(ctx, bson.M{"refresh_token": user.Refresh_token}).Decode(&foundUser)
+		defer cancel()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "login or passowrd is incorrect"})
+			return
+		}
+
+		token, refreshToken, _ := helpers.GenerateAllTokens(*foundUser.Email, *foundUser.First_name, *foundUser.Last_name, foundUser.User_id)
+
+		helpers.UpdateAllTokens(token, refreshToken, foundUser.User_id)
+
+		c.JSON(http.StatusOK, foundUser)
+
+	}
+}
+
+//GetUser is the api used to tget a single user
+func GetUser() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		var user models.User
+		var foundUser models.User
+
+		if err := c.BindJSON(&user); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		err := userCollection.FindOne(ctx, bson.M{"email": user.Email}).Decode(&foundUser)
+		defer cancel()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "login or password is incorrect"})
+			return
+		}
+
+		passwordIsValid, msg := VerifyPassword(*user.Password, *foundUser.Password)
+		defer cancel()
+		if passwordIsValid != true {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+			return
+		}
+
+		token, refreshToken, _ := helpers.GenerateAllTokens(*foundUser.Email, *foundUser.First_name, *foundUser.Last_name, foundUser.User_id)
+
+		helpers.UpdateAllTokens(token, refreshToken, foundUser.User_id)
+
+		c.JSON(http.StatusOK, foundUser)
+
+	}
+}
+
+func Logout() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.SetCookie("token", "", -1, "", "", false, true)
+		c.SetCookie("refresh_token", "", -1, "", "", false, true)
+		c.JSON(http.StatusOK, gin.H{"message": "logout successful"})
+
+	}
+}

@@ -124,3 +124,95 @@ func UpdateAllTokens(signedToken string, signedRefreshToken string, userId strin
 
 	return
 }
+
+func DeleteAllTokens(userId string) {
+	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+
+	filter := bson.M{"user_id": userId}
+
+	_, err := userCollection.DeleteOne(
+		ctx,
+		filter,
+	)
+	defer cancel()
+
+	if err != nil {
+		log.Panic(err)
+		return
+	}
+
+	return
+}
+
+//GetUserToken returns the user token
+func GetUserToken(userId string) (token string, err error) {
+	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+
+	var userToken struct {
+		Token string `bson:"token"`
+	}
+
+	filter := bson.M{"user_id": userId}
+
+	err = userCollection.FindOne(
+		ctx,
+		filter,
+	).Decode(&userToken)
+	defer cancel()
+
+	if err != nil {
+		log.Panic(err)
+		return
+	}
+
+	return userToken.Token, err
+}
+
+//GetUserRefreshToken returns the user refresh token
+func GetUserRefreshToken(userId string) (token string, err error) {
+	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+
+	var userToken struct {
+		Refresh_token string `bson:"refresh_token"`
+	}
+
+	filter := bson.M{"user_id": userId}
+
+	err = userCollection.FindOne(
+		ctx,
+		filter,
+	).Decode(&userToken)
+	defer cancel()
+
+	if err != nil {
+		log.Panic(err)
+		return
+	}
+
+	return userToken.Refresh_token, err
+}
+
+//GetUserId returns the user id
+func GetUserId(signedToken string) (userId string, err error) {
+	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+
+	var userToken struct {
+		User_id string `bson:"user_id"`
+	}
+
+	filter := bson.M{"token": signedToken}
+
+	err = userCollection.FindOne(
+		ctx,
+		filter,
+	).Decode(&userToken)
+	defer cancel()
+
+	if err != nil {
+		log.Panic(err)
+		return
+	}
+
+	return userToken.User_id, err
+} //GetUserId
+
